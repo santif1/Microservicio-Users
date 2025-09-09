@@ -6,11 +6,16 @@ import { RoleEntity } from './roles.entity';
 export class UserEntity extends BaseEntity implements UserI {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  nombreUsuario: string;
+
   @Index({unique:true})
   @Column()
   email: string;
+  
   @Column()
-  password: string;
+  password: string;   
 
   // Relación n a n con la tabla roles (tabla intermedia)
   @ManyToMany(()=> RoleEntity, role => role.users, { eager: true })

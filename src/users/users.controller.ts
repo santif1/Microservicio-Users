@@ -31,8 +31,8 @@ export class UsersController {
 
 
   // Retorna todos los usuarios - protegido
-  @UseGuards(AuthGuard)
-  @Permissions('user_list')
+  /*@UseGuards(AuthGuard)
+  @Permissions('user_list')*/
   @Get('users')
   async findAll() {
   return this.service.findAll();

@@ -1,6 +1,6 @@
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 
-// hacer     " npm install class-validator class-transformer "    si no reconoce 'class-validator'
+// hacer " npm install class-validator class-transformer "    si no reconoce 'class-validator'
 
 export class UpdateUserProfileDto {
 

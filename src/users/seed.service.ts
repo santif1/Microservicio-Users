@@ -36,33 +36,35 @@ export class SeedService implements OnModuleInit {
   async onModuleInit() {
     const permissions = await this.createPermissions(); //Crea los permisos
     await this.seedRoles(permissions); //Crea los roles principales
-    await this.seedAdminUser(); //Crea el usuario administrador
+    await this.seedSupervisor(); //Crea el usuario administrador
   }
 
 
   //CREACIÓN DE LOS PERMISOS
   async createPermissions() {
       const allPermissions = [
-      'create_users',
+      'create_user',
       'create_roles',
-      'add_permissions',
-      'create_payments',
-      'payments_list',
-      'modify_payments',
-      'refund_payments',
-      'remove_payments',
-      'order_list',
-      'order_create',
-      'order_modify',
-      'order_remove',
-      'permissions_create',
-      'modify_roles',
-      'modify_permissions',
-      'remove_roles',
-      'remove_permissions',
-      'user_list',
-      'permissions_list',
-      'roles_list'
+      'create_permissions',
+      'update_user',
+      'update_roles',
+      'update_permissions',
+      'delete_user',
+      'delete_roles',
+      'delete_permissions',
+      'list_users',
+      'list_roles',
+      'list_permissions',
+      'create_venta',
+      'update_venta',
+      'delete_venta',
+      'list_ventas',
+      'create_compra',
+      'update_compra',
+      'delete_compra',
+      'list_compras',
+      'ver_dashboard',
+      'update_stock'
     ];
 
     //Crea y carga los servicios en la base de datos si aún no han sido creados
@@ -85,27 +87,35 @@ export class SeedService implements OnModuleInit {
   async seedRoles(permissions: PermissionEntity[]){
     // Definir roles y sus permisos
 
-
     //Permisos del rol Usuario / User
-    const userPermissions = [
-      'payments_list',
-      'modify_payments', 
-      'refund_payments', 
-      'order_list', 
-      'order_create', 
-      'order_modify', 
-      'order_remove'
+    const vendedorPermissions = [
+      'create_venta',
+      'update_venta',
+      'delete_venta',
+      'list_ventas',
+      'update_user'
+    ]
+
+    const encargadoComprasPermissions = [
+      'create_compra',
+      'update_compra',
+      'delete_compra',
+      'list_compras',
+      'update_user'
     ]
 
     const rolesConfig = [
       {
-        name: 'admin',
-        permissions: permissions, // Admin tiene todos los permisos
+        name: 'Supervisor',
+        permissions: permissions, // El supervisor tiene todos los permisos
       },
       {
-        name: 'user',
-        permissions: permissions.filter(p => userPermissions.includes(p.name)), 
-        // Usuario básico con permisos limitados. No puede crear ni modificar roles o permisos.
+        name: 'Vendedor',
+        permissions: permissions.filter(p => vendedorPermissions.includes(p.name))
+      },
+      {
+        name: 'Encargado de Compras',
+        permissions: permissions.filter(p => encargadoComprasPermissions.includes(p.name))
       }
     ]
 
@@ -152,34 +162,35 @@ export class SeedService implements OnModuleInit {
 
 
   //CREACIÓN DE USUARIO ADMINISTRADOR
-  async seedAdminUser() {
+  async seedSupervisor() {
 
     //Busca el rol 'admin' en la BD
-    let adminRole = await this.roleRepo.findOneBy({name: 'admin'});
+    let supervisorRole = await this.roleRepo.findOneBy({name: 'Supervisor'});
 
 
     //Si no lo encuentra no crea el usuario
-    if (!adminRole) {
-      console.log('Error: Rol admin no encontrado.') //DEBUG
+    if (!supervisorRole) {
+      console.log('Error: Rol supervisor no encontrado.') //DEBUG
       return;
     }
 
     //Busca un usuario en la BD que coincida con el parámetro
-    let adminUser = await this.userRepo.findOneBy({ email: 'admin@example.com' });
+    let supervisorUser = await this.userRepo.findOneBy({ email: 'admin@example.com' });
     //Si no lo encuentra, lo crea y lo guarda en la BD
-    if (!adminUser) {
-      adminUser = this.userRepo.create({
+    if (!supervisorUser) {
+      supervisorUser = this.userRepo.create({
         //Atributos de la entidad
+        nombreUsuario: 'manubernardi',
         email: 'admin@example.com',
         password: hashSync('123456', 10), //Password encriptada
-        roles: [adminRole],
+        roles: [supervisorRole],
       });
-      await this.userRepo.save(adminUser);
+      await this.userRepo.save(supervisorUser);
 
-      console.log('✅ Usuario admin creado'); //DEBUG
+      console.log('✅ Usuario Supervisor creado'); //DEBUG
 
     } else {
-      console.log('⚠️ Usuario admin ya existía'); //DEBUG
+      console.log('⚠️ Usuario Supervisor ya existía'); //DEBUG
     }
   }
 }
